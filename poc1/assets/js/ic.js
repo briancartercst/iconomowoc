@@ -1,5 +1,4 @@
 // Iconomowoc main js file
-
 var currentPercent = 0;
 var counter = 0;
 var tid = setInterval(stepcounter, 27);
@@ -10,6 +9,8 @@ var sideSpace = 10;
 var size1k = 100;
 var canvasWidth = windowWidth - (sideSpace*2);
 var startOffset = (canvasWidth/2);
+
+
 
 $('#canvas').css({'width': canvasWidth});
 $('.me').css({'left': startOffset});
