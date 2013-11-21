@@ -2,6 +2,8 @@
   <h2 class="name"><%= user.name %></h2>
   <%- linkTo('Edit this user', editUserPath(params.id), {class: 'btn pull-right'}); %>
 
+  <%- linkTo('Walk', '/users/'+user.id+'/walk', {class: 'btn pull-right'}); %>
+
   <%- linkTo('User List', '/users', {class: 'btn pull-right'}); %>
 
   <%- linkTo('Add Steps', '/users/'+user.id+'/addsteps', {class: 'btn pull-right'}); %>

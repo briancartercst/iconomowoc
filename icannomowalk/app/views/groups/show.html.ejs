@@ -1,6 +1,7 @@
 <div class="hero-unit">
   <h2 class="name"><%= group.name %></h2>
   <%- linkTo('Edit this group', editGroupPath(group.id), {class: 'btn pull-right'}); %>
+  <%- linkTo('Walk', '/groups/'+group.id+'/walk', {class: 'btn pull-right'}); %>
   <%- linkTo('Group List', '/groups', {class: 'btn pull-right'}); %>
   <%- linkTo('Add User', '/groups/'+group.id+'/addusers', {class: 'btn pull-right'}); %>
 </div>
