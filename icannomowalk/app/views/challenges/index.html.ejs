@@ -1,0 +1,19 @@
+<div class="hero-unit">
+  <h2>All Challenges</h2>
+  <%- linkTo('Create a new Challenge', addChallengePath, {class: 'btn pull-right'}); %>
+</div>
+
+<div id="challenges-list">
+<% if (challenges) { %>
+<% for (var i = 0, ii = challenges.length; i < ii; i++) { %>
+  <div class="row list-item" id="challenge-<%= challenges[i].id; %>">
+    <div class="span8">
+      <h3><%- linkTo(challenges[i].name, challengePath(challenges[i].id)); %></h3>
+    </div>
+    <div class="span4">
+      <h3><i class="icon-list-alt"></i><%= challenges[i].id; %></h3>
+    </div>
+  </div>
+<% } %>
+<% } %>
+</div>
