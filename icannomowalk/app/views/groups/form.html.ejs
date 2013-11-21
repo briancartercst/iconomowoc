@@ -1,7 +1,12 @@
 <div class="control-group">
-  <label for="name" class="control-label">name</label>
+  <label for="name" class="control-label">Name</label>
   <div class="controls">
-    <%- contentTag('input', group.name, {type:'text', class:'span6', name:'name'}) %>
-    <%- selectTag(challenges,group.challengeId,{name:"challengeId",textField:'name',valueField:'id'}) %>
+    <%- contentTag('input', group.name, {id:"name",type:'text', class:'span6', name:'name'}) %>
+  </div>
+</div>
+<div class="control-group">
+  <label for="challengeId" class="control-label">Challenge</label>
+  <div class="controls">
+	<%- selectTag(challenges,group.challengeId,{id:"challengeId",name:"challengeId",textField:'name',valueField:'id'}) %>
   </div>
 </div>
