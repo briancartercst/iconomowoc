@@ -45,6 +45,8 @@ router.resource('challenges');
 
 router.get('/users/:id/addsteps').to('users.addSteps');
 router.get('/users/:id/walk').to('users.walk');
+router.get('/users/:id/multisteps').to('users.addMultiSteps');
+router.post('/users/:id/createmultisteps').to('users.createMultiSteps');
 router.get('/groups/:id/walk').to('groups.walk');
 router.get('/users/:id/getsteps(.:format)').to('users.getSteps');
 router.get('/groups/:id/getsteps(.:format)').to('groups.getSteps');

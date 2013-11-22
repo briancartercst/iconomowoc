@@ -49,7 +49,6 @@ var User = function () {
       if(stepday >= from && stepday <= to)
       {
         steps += this.steps[x].steps;
-        stepmodel()
       }
     }
     return steps;
