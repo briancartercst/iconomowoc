@@ -3,6 +3,7 @@ var Group = function () {
   this.defineProperties({
     name: {type: 'string', required: true},
     lastLookedAt: {type:'object'},
+    lastAverage: {type:'object'},
     startingSteps: {type:'int'}
   });
   this.hasMany('Users', {through:'Groupusers'});

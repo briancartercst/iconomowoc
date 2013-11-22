@@ -185,9 +185,45 @@ var Users = function () {
 
   this.walk = function(req,resp,params){
     var self = this;
-    self.respond({params:params});
+    geddy.model.User.first(params.id,function(err,user){
+      if(err){
+        self.respond(error);
+      }
+      if (!user) {
+        throw new geddy.errors.NotFoundError();
+      }
+      else
+      {
+        var laststeps = user.lastLookedAt ? user.lastLookedAt.steps : 0;
+        var data = {user_id:user.id,user_name:user.name,totalsteps:user.totalSteps(),laststeps:laststeps};
+        if(user.lastLookedAt == null)
+        {
+          user.lastLookedAt = {steps:user.totalSteps(),date:new Date()};
+        }
+        else
+        {
+          var today = new Date();
+          var steps = user.lastLookedAt.steps + user.stepsFromDateToDate(new Date(user.lastLookedAt.date.getTime()+1),today);
+          user.lastLookedAt = {steps:steps, date: today};
+        }
+        user.save();
+        geddy.model.User.all({not:{id:user.id}},function(err,users){
+            var otherusers = {};
+            var others = [];
+            for(var i = 0; i<users.length; i++)
+            {
+              if(users[i].totalSteps() >= data.totalsteps-5000 && users[i].totalSteps() <= data.totalsteps + 5000)
+              {
+                other = {user_id:users[i].id,user_name:users[i].name,totalsteps:users[i].totalSteps()};
+                others.push(other);
+              }
+            }
+            data.otherusers = others;
+            console.log(data);
+            self.respond({data:data});
+        });
+    }
+  });
   };
-
 };
-
 exports.Users = Users;

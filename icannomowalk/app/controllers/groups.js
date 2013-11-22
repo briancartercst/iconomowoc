@@ -1,4 +1,4 @@
-var arraydiff = require("../helpers/array.js")
+//var arraydiff = require("../helpers/array.js")
 var Groups = function () {
   this.respondsWith = ['html', 'json', 'xml', 'js', 'txt'];
 
@@ -91,13 +91,33 @@ var Groups = function () {
         throw new geddy.errors.NotFoundError();
       }
       else {
-        geddy.model.User.all(function(err,user){
+        group.getUsers(function(error,users){
+          var notl = [];
+          for(var x = 0; x < users.length; x++)
+          {
+            var us = {id:users[x].id};
+            notl.push(us);
+          }
+          if(users.length > 0 )
+          {
+            query = {not:{or:notl}};
+          }
+          else
+          {
+            query = "";
+          }  
+
+          geddy.model.User.all(query,function(err,returnedusers){
+            self.respond({group:group,users:returnedusers})
+          });
+        });
+        /*geddy.model.User.all(function(err,user){
           group.getUsers(function(error,users)
           {
             var returnedusers = arraydiff(user,users);
             self.respond({group:group,users:returnedusers});
           });
-        });
+        });*/
       }
     });
   };
@@ -233,7 +253,59 @@ var Groups = function () {
 
   this.walk = function(req,resp,params){
     var self = this;
-    self.respond({params:params});
+    geddy.model.Group.first(params.id,function(err,group){
+      if(err){
+        self.respond(error);
+      }
+      if (!group) {
+        throw new geddy.errors.NotFoundError();
+      }
+      else
+      {
+        var laststeps = group.lastLookedAt ? group.lastLookedAt.steps : 0;
+        var data = {group_id:group.id,group_name:group.name,totalsteps:0,averagesteps:0,laststeps:laststeps,lastaverage:0};
+        group.getChallenge(function(err,challenge){
+          if(err){
+            throw err;
+          }
+          group.getUsers(function(error,users){
+            var total = 0;
+            if(error){
+              throw error;
+            }
+            else{
+              var total = 0;
+
+              for(var x = 0; x< users.length; x++)
+              {
+                total += users[x].stepsFromDateToDate(challenge.start,challenge.end);
+              }
+
+              var average = users.length >0 ? total/users.length : 0;
+              var lastaverage = group.lastAverage ? group.lastAverage.steps : 0;
+              data.averagesteps = average;
+              data.totalsteps = total;
+              data.lastaverage = lastaverage;
+              group.lastLookedAt = {steps:total, date:new Date()};
+              group.lastAverage = {steps:average, date: new Date()};
+              group.save();
+
+              geddy.model.Group.all({challengeId:challenge.id,not:{id:group.id}},function(error,othergroups){
+                var others = [];
+                for(var x = 0; x < othergroups.length; x++)
+                {
+                  var othersteps = othergroups[x].lastAverage ? othergroups[x].lastAverage.steps : 0;
+                  others.push({group_id:othergroups[x].id,group_name:othergroups[x].name,lastaverage:othersteps});
+                }
+                data.othergroups = others;
+                console.log(data);
+                self.respond({data:data});
+              });
+            }
+          });
+        });
+      }
+    });
   };
 
 };
