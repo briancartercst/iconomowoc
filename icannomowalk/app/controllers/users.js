@@ -1,4 +1,5 @@
 var stepmodel = require("../helpers/step.js")
+//var $ = require("jquery")
 var Users = function () {
   this.respondsWith = ['html', 'json', 'xml', 'js', 'txt'];
 

@@ -19,18 +19,19 @@
 var config = {
   detailedErrors: false
 , hostname: null
-, port: 4000
+, port: 7000
+, workers: 16
 , model: {
     defaultAdapter: 'mongo'
   }
 , db: {
     mongo: {
-      username: null
-    , dbname: 'production'
+      username: 'icannomowalk'
+    , dbname: 'icannomowalk'
     , prefix: null
-    , password: null
+    , password: 'icannomowalk'
     , host: 'localhost'
-    , port: 27017
+    , port: 27891
     }
   }
 
