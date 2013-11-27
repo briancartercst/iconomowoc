@@ -1,85 +1,71 @@
-var stepmodel = require("../helpers/step.js")
-//var $ = require("jquery")
+var passport = require('../helpers/passport')
+  , cryptPass = passport.cryptPass
+  , requireAuth = passport.requireAuth;
+var measurement = require("../helpers/measurement.js");  
+
 var Users = function () {
+  this.before(requireAuth, {
+    except: ['add', 'create']
+  });
+
   this.respondsWith = ['html', 'json', 'xml', 'js', 'txt'];
 
   this.index = function (req, resp, params) {
     var self = this;
 
     geddy.model.User.all(function(err, users) {
-      self.respondWith(users, {type:'User'});
+      self.respond({params: params, users: users});
     });
   };
 
   this.add = function (req, resp, params) {
-    this.respond({params: params});
-  };
-
-  this.addSteps = function (req,resp,params){
-    var self = this;
-    geddy.model.User.first(params.id,function(err,user){  
-      if(err)
-	     throw err;
-
-      self.respondWith(user);
-
-    });
-  };
-  
-  this.createSteps = function (req,resp,params){
-    var self = this;
-    var upload = geddy.date.parse(params.date);
-    //var steps = geddy.model.Step.create({steps:params.steps,date: new Date(upload)});
-    var steps = new stepmodel(parseInt(params.steps),new Date(upload));
-    geddy.model.User.first(params.id, function(err,user){
-      if(err)
-	     throw err;
-      if(!user)
-      {
-        throw new geddy.errors.NotFoundError();	
-      }
-      else
-      {
-      	user.steps.push(steps);
-      	user.save(function(err,data){
-      	  if(err)
-      	    throw err;
-      	  self.redirect({controller: 'users', action: 'show', id: user.id});
-      	  //self.respondWith(user,{status:err});
-      	});
-      }
-    });
+    this.respond({params: params,user:null});
   };
 
   this.create = function (req, resp, params) {
     var self = this
-      , user = geddy.model.User.create(params);
+      , user = geddy.model.User.create(params)
+      , sha;
 
-    if (!user.isValid()) {
-      this.respondWith(user);
-    }
-    else {
-      user.steps = [];
-      user.save(function(err, data) {
-        if (err) {
-          throw err;
+    // Non-blocking uniqueness checks are hard
+    geddy.model.User.first({username: user.username}, function(err, data) {
+      if (data) {
+        params.errors = {
+          username: 'This username is already in use.'
+        };
+        self.transfer('add');
+      }
+      else {
+        if (user.isValid()) {
+          user.password = cryptPass(user.password);
+          user.measurements = [];
+          user.devices = [];
+          user.goals = [];
+          user.friends = [];
         }
-        self.respondWith(user, {status: err});
-      });
-    }
+        user.save(function(err, data) {
+          if (err) {
+            params.errors = err;
+            self.transfer('add');
+          }
+          else {
+            self.redirect({controller: self.name});
+          }
+        });
+      }
+    });
+
   };
 
   this.show = function (req, resp, params) {
     var self = this;
 
     geddy.model.User.first(params.id, function(err, user) {
-      if (err) {
-        throw err;
-      }
       if (!user) {
-        throw new geddy.errors.NotFoundError();
-      }
-      else {
+        var err = new Error();
+        err.statusCode = 400;
+        self.error(err);
+      } else {
         user.getGroups(function(err,groups){
           if(err){
             throw err;
@@ -89,7 +75,93 @@ var Users = function () {
             user.totalsteps = user.totalSteps();
             self.respond({user:user,groups:groups});
           }
-        });	
+        });
+      }
+    });
+  };
+  this.edit = function (req, resp, params) {
+    var self = this;
+
+    geddy.model.User.first(params.id, function(err, user) {
+      if (!user) {
+        var err = new Error();
+        err.statusCode = 400;
+        self.error(err);
+      } else {
+        self.respond({params: params, user: user});
+      }
+    });
+  };
+
+  this.update = function (req, resp, params) {
+    var self = this;
+
+    geddy.model.User.first(params.id, function(err, user) {
+      // Only update password if it's changed
+      var skip = params.password ? [] : ['password'];
+
+      user.updateAttributes(params, {skip: skip});
+
+      if (params.password && user.isValid()) {
+        user.password = cryptPass(user.password);
+      }
+
+      user.save(function(err, data) {
+        if (err) {
+          params.errors = err;
+          self.transfer('edit');
+        } else {
+          self.redirect({controller: self.name});
+        }
+      });
+    });
+  };
+
+  this.destroy = function (req, resp, params) {
+    var self = this;
+
+    geddy.model.User.remove(params.id, function(err) {
+      if (err) {
+        params.errors = err;
+        self.transfer('edit');
+      } else {
+        self.redirect({controller: self.name});
+      }
+    });
+  };
+
+this.addSteps = function (req,resp,params){
+    var self = this;
+    geddy.model.User.first(params.id,function(err,user){  
+      if(err)
+       throw err;
+
+      self.respondWith(user);
+
+    });
+  };
+
+this.createSteps = function (req,resp,params){
+    var self = this;
+    var upload = geddy.date.parse(params.date);
+    //var steps = geddy.model.Step.create({steps:params.steps,date: new Date(upload)});
+    var steps = new measurement(12345,parseInt(params.steps),new Date(upload));
+    geddy.model.User.first(params.id, function(err,user){
+      if(err)
+       throw err;
+      if(!user)
+      {
+        throw new geddy.errors.NotFoundError(); 
+      }
+      else
+      {
+        user.steps.push(steps);
+        user.save(function(err,data){
+          if(err)
+            throw err;
+          self.redirect({controller: 'users', action: 'show', id: user.id});
+          //self.respondWith(user,{status:err});
+        });
       }
     });
   };
@@ -121,45 +193,6 @@ var Users = function () {
         user.lastLookedAt = {steps:user.totalSteps(),date:new Date()};
         user.save();
         self.respond({data:data},{format:'json'});
-      }
-    });
-  };
-
-  this.edit = function (req, resp, params) {
-    var self = this;
-
-    geddy.model.User.first(params.id, function(err, user) {
-      if (err) {
-        throw err;
-      }
-      if (!user) {
-        throw new geddy.errors.BadRequestError();
-      }
-      else {
-        self.respondWith(user);
-      }
-    });
-  };
-
-  this.update = function (req, resp, params) {
-    var self = this;
-
-    geddy.model.User.first(params.id, function(err, user) {
-      if (err) {
-        throw err;
-      }
-      user.updateProperties(params);
-
-      if (!user.isValid()) {
-        self.respondWith(user);
-      }
-      else {
-        user.save(function(err, data) {
-          if (err) {
-            throw err;
-          }
-          self.respondWith(user, {status: err});
-        });
       }
     });
   };
@@ -198,27 +231,6 @@ var Users = function () {
     });
   };
 
-  this.remove = function (req, resp, params) {
-    var self = this;
-
-    geddy.model.User.first(params.id, function(err, user) {
-      if (err) {
-        throw err;
-      }
-      if (!user) {
-        throw new geddy.errors.BadRequestError();
-      }
-      else {
-        geddy.model.User.remove(params.id, function(err) {
-          if (err) {
-            throw err;
-          }
-          self.respondWith(user);
-        });
-      }
-    });
-  };
-
   this.walk = function(req,resp,params){
     var self = this;
     geddy.model.User.first(params.id,function(err,user){
@@ -248,5 +260,7 @@ var Users = function () {
       }
     });
   };
+
 };
+
 exports.Users = Users;

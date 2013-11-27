@@ -18,17 +18,17 @@
 
 var config = {
   detailedErrors: true
-, workers: 4
+, workers: 6
 , debug: true
 , hostname: null
 , port: 4000
 , model: {
     defaultAdapter: 'mongo'
   }
-, sessions: {
-    store: 'memory'
-  , key: 'sid'
-  , expiry: 14 * 24 * 60 * 60
+,sessions: {
+    store: 'cookie'
+  , key: 'sid_dev'
+  , expiry: 1 * 24 * 60 * 60
   }
 , db: {
     mongo: {

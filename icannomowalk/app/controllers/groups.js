@@ -1,22 +1,42 @@
-//var arraydiff = require("../helpers/array.js")
+var passport = require('../helpers/passport')
+  , cryptPass = passport.cryptPass
+  , requireAuth = passport.requireAuth;
 var Groups = function () {
+      this.before(requireAuth, { });
   this.respondsWith = ['html', 'json', 'xml', 'js', 'txt'];
 
   this.index = function (req, resp, params) {
     var self = this;
-
-    geddy.model.Group.all(function(err, groups) {
-      self.respondWith(groups, {type:'Group'});
+    var User = geddy.model.User;
+    User.first({id: this.session.get('userId')}, function (err, user) {
+      if (user) {
+        data.user = user;
+        user.getGroups(function(err,groups){
+          if(groups)
+          {
+            data.groups = groups;
+          }
+          self.respond(data);
+        });
+      }
     });
   };
 
   this.add = function (req, resp, params) {
     var self = this;
-    geddy.model.Challenge.all(function(err,challenges)
-    {
-      self.respond({params: params,challenges:challenges});
+    var User = geddy.model.User;
+    User.first({id: this.session.get('userId')}, function (err, user) {
+      if (user) {
+        user.getChallenges(function(err,challenges){
+          if(challenges)
+          {
+            data.challenges = challenges;
+          }
+          self.respond(data);
+        });
+
+      }
     });
-    
   };
 
   this.create = function (req, resp, params) {
@@ -31,7 +51,14 @@ var Groups = function () {
         if (err) {
           throw err;
         }
-        self.respondWith(group, {status: err});
+      });
+        var User = geddy.model.User;
+        User.first({id: this.session.get('userId')}, function (err, user) {
+          if (user) {
+            user.addGroup(group);
+            user.save();
+          }
+        self.respondWith(group, {status:err});
       });
     }
   };
@@ -54,6 +81,9 @@ var Groups = function () {
 */
   this.show = function(req,resp,params) {
     var self = this;
+    var User = geddy.model.User;
+    User.first({id: this.session.get('userId')}, function (err, user) {
+      if (user) {
      geddy.model.Group.first(params.id, function(err, group) {
         if (err) {
           throw err;
@@ -72,13 +102,15 @@ var Groups = function () {
                   throw error;
                 }
                 else{
-                  self.respond({challenge:chal,group:group,users:users});
+                  self.respond({challenge:chal,group:group,users:users,user:user});
                 }
               });
             }
 	        });
         }
       });
+    }
+  });
   };
 
   this.addUsersToGroup = function(req,resp,params){
@@ -190,18 +222,22 @@ var Groups = function () {
 
   this.edit = function (req, resp, params) {
     var self = this;
-
-    geddy.model.Group.first(params.id, function(err, group) {
-      if (err) {
-        throw err;
-      }
-      if (!group) {
-        throw new geddy.errors.BadRequestError();
-      }
-      else {
-        geddy.model.Challenge.all(function(err,challenges)
-        {
-          self.respond({group: group,challenges:challenges});
+    var User = geddy.model.User;
+    User.first({id: this.session.get('userId')}, function (err, user) {
+      if (user) {
+        geddy.model.Group.first(params.id, function(err, group) {
+          if (err) {
+            throw err;
+          }
+          if (!group) {
+            throw new geddy.errors.BadRequestError();
+          }
+          else {
+            user.getChallenges(function(err,challenges)
+            {
+              self.respond({group: group,challenges:challenges, user:user});
+            });
+          }
         });
       }
     });

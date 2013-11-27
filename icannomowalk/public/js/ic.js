@@ -7,7 +7,7 @@ var windowWidth = $(window).width();
 var windowHeight =$(window).height();
 var sideSpace = 10;    
 var size1k = 100;
-var canvasWidth = windowWidth - (sideSpace*2);
+var canvasWidth =800;// windowWidth - (sideSpace*2);
 var startOffset = (canvasWidth/2);
 
 

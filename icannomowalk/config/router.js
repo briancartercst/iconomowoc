@@ -39,7 +39,6 @@ router.get('/').to('Main.index');
 //   this.get('/print(.:format)').to('Hemispheres.print');
 // });
 
-router.resource('users');
 router.resource('groups');
 router.resource('challenges');
 
@@ -53,4 +52,20 @@ router.get('/groups/:id/getsteps(.:format)').to('groups.getSteps');
 router.get('/groups/:id/addusers(.:format)').to('groups.addUsersToGroup');
 router.post('/users/:id/createsteps').to('users.createSteps');
 router.post('/groups/:id/linkusers').to('groups.addUsers');
+
+//router.get('/admin/users').to('adminusers.index');
+
+router.get('/login').to('Main.login');
+router.get('/logout').to('Main.logout');
+router.post('/auth/local').to('Auth.local');
+router.get('/auth/twitter').to('Auth.twitter');
+router.get('/auth/twitter/callback').to('Auth.twitterCallback');
+router.get('/auth/facebook').to('Auth.facebook');
+router.get('/auth/facebook/callback').to('Auth.facebookCallback');
+router.get('/auth/yammer').to('Auth.yammer');
+router.get('/auth/yammer/callback').to('Auth.yammerCallback');
+router.resource('users');
+router.resource('adminusers');
+router.resource('admingroups');
+router.resource('adminchallenges');
 exports.router = router;

@@ -1,16 +1,36 @@
+var passport = require('../helpers/passport')
+  , cryptPass = passport.cryptPass
+  , requireAuth = passport.requireAuth;
 var Challenges = function () {
+    this.before(requireAuth, {
+  });
   this.respondsWith = ['html', 'json', 'xml', 'js', 'txt'];
 
   this.index = function (req, resp, params) {
     var self = this;
+    var User = geddy.model.User;
+    User.first({id: this.session.get('userId')}, function (err, user) {
+      if (user) {
+        user.getChallenges(function(err,challenges){
+          if(challenges)
+          {
+            data.challenges = challenges;
+          }
+          self.respond(data);
+        });
 
-    geddy.model.Challenge.all(function(err, challenges) {
-      self.respondWith(challenges, {type:'Challenge'});
+      }
     });
   };
 
   this.add = function (req, resp, params) {
-    this.respond({params: params});
+    var self = this;
+    var User = geddy.model.User;
+    User.first({id: this.session.get('userId')}, function (err, user) {
+      if (user) {
+        self.respond({params: params,user:user});
+      }
+    });
   };
 
   this.create = function (req, resp, params) {
@@ -25,39 +45,54 @@ var Challenges = function () {
         if (err) {
           throw err;
         }
-        self.respondWith(challenge, {status: err});
       });
+        var User = geddy.model.User;
+        User.first({id: this.session.get('userId')}, function (err, user) {
+          if (user) {
+            user.addChallenge(challenge);
+            user.save();
+          }
+          self.redirect({controller:'challenges', action:'show', id:challenge.id})
+        });
     }
   };
 
   this.show = function (req, resp, params) {
     var self = this;
-
-    geddy.model.Challenge.first(params.id, function(err, challenge) {
-      if (err) {
-        throw err;
-      }
-      if (!challenge) {
-        throw new geddy.errors.NotFoundError();
-      }
-      else {
-        self.respondWith(challenge);
-      }
+    var User = geddy.model.User;
+    User.first({id: this.session.get('userId')}, function (err, user) {
+    if (user) {
+      geddy.model.Challenge.first(params.id, function(err, challenge) {
+        if (err) {
+          throw err;
+        }
+        if (!challenge) {
+          throw new geddy.errors.NotFoundError();
+        }
+        else {
+          self.respond({challenge:challenge, user:user});
+        }
+      });
+    }
     });
   };
 
   this.edit = function (req, resp, params) {
     var self = this;
-
-    geddy.model.Challenge.first(params.id, function(err, challenge) {
-      if (err) {
-        throw err;
-      }
-      if (!challenge) {
-        throw new geddy.errors.BadRequestError();
-      }
-      else {
-        self.respondWith(challenge);
+    var User = geddy.model.User;
+    User.first({id: this.session.get('userId')}, function (err, user) {
+      if (user) {
+        geddy.model.Challenge.first(params.id, function(err, challenge) {
+          if (err) {
+            throw err;
+          }
+          if (!challenge) {
+            throw new geddy.errors.BadRequestError();
+          }
+          else {
+            self.respond({challenge:challenge,user:user});
+          }
+        });
       }
     });
   };

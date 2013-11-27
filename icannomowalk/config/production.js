@@ -34,6 +34,11 @@ var config = {
     , port: 27891
     }
   }
+  ,sessions: {
+    store: 'cookie'
+  , key: 'sid'
+  , expiry: 1 * 24 * 60 * 60
+  }
 
 /* // Using Postgres as the default, with only a Postgres DB
 , model: {

@@ -6,6 +6,7 @@ var Challenge = function () {
     end: {type: 'date'}
   });
   this.hasMany('Groups');
+  this.hasMany('Users', {through:'Challengeusers'});
   this.autoIncrementId = true;
 
   /*

@@ -6,13 +6,16 @@
           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
             <span class="i-bar"><i class="icon-chevron-down icon-white"></i></span>
           </a>
-          <%- linkTo('Geddy App', mainsPath, {class: 'brand'}) %>
+          <%- linkTo('Iconomowoc', mainsPath, {class: 'brand'}) %>
           <div class="nav-collapse">
             <ul class="nav">
               <li class="active"><%- linkTo('Home', mainsPath) %></li>
-              <li><%- linkTo('User List', '/users') %></li>
-              <li><%- linkTo('Group List', '/groups') %></li>
-              <li><%- linkTo('Challenge List', '/challenges') %></li>
+              <% if (user) { %>
+              <li><%- linkTo('My Friends', '/users') %></li>
+              <li><%- linkTo('My Groups', '/groups') %></li>
+              <li><%- linkTo('My Challenges', '/challenges') %></li>
+              <li><%- linkTo('Logout', '/logout') %></li>
+              <% } %>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
