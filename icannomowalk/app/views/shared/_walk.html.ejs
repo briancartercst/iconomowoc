@@ -1,0 +1,99 @@
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="author" content="Brian Carter, Chris Weston, Jim Ziles" />
+    <meta name="description" content="I'm so motivated I can no more walk!" />
+
+    <title>IConomowoc | I'm so motivated I can no more walk!</title>
+    <%- styleLink('/css/reset.css', {rel:'stylesheet'}) %>
+    <%- styleLink('/css/main.css', {rel:'stylesheet'}) %>
+    <%- styleLink('/css/webkit_keyframes.css', {rel:'stylesheet'}) %>
+    <%- styleLink('/css/moz_keyframes.css', {rel:'stylesheet'}) %>
+    <%- styleLink('/css/ms_keyframes.css', {rel:'stylesheet'}) %>
+    <%- styleLink('/css/o_keyframes.css', {rel:'stylesheet'}) %>
+    <%- styleLink('/css/keyframes.css', {rel:'stylesheet'}) %>
+    <%- styleLink('/css/common.css', {rel:'stylesheet'}) %>
+</head>
+
+    <div id="canvas" style="height:600px;margin-left:25%;">
+        <div class="sky">
+            <div class="cloud-1"></div>
+            <div class="cloud-2"></div>
+            <div class="cloud-3"></div>
+            <div class="cloud-4"></div>
+            <div class="cloud-5"></div>
+            <div class="cloud-6"></div>
+            <div class="cloud-7"></div>
+            <div class="cloud-8"></div> 
+        </div>
+
+        <div class="horizon"></div>
+
+        <div class="ground">
+            <div class="sign-yousmall"></div>
+        </div>
+
+        <div class="me">
+            <div class="torso">
+                <div class="left leg">
+                    <div class="left thigh">
+                        <div class="left shin">
+                            <div class="left foot">
+                                <div class="left toes"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- left leg -->
+
+                <div class="right leg">
+                    <div class="right thigh">
+                        <div class="right shin">
+                            <div class="right foot">
+                                <div class="right toes"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- right leg -->
+
+                <div class="left arm">
+                    <div class="left bicep">
+                        <div class="left forearm"></div>
+                    </div>
+                </div> <!-- left arm -->
+
+                <div class="right arm">
+                    <div class="right bicep">
+                        <div class="right forearm"></div>
+                    </div>
+                </div> <!-- right arm -->
+
+            </div> <!-- torso -->
+        </div> <!-- me -->
+
+    
+
+    </div> <!-- canvas -->
+
+    <%- scriptLink('/js/jquery.min.js', {type:'text/javascript'}) %>
+    <%- scriptLink('/js/ic.js', {type:'text/javascript'}) %>
+
+    
+    <!--  todo:  add this to an external js file once poc is underway-->
+     <script type="text/javascript">
+        $(".ground").append('<div class="sign-xk" style="top: 348px; left: ' + startOffset + 'px; background-image: url(../../css/images/signs/sign0k.png);"></div>');
+        $(".ground").append('<div class="sign-xk" style="top: 348px; left: ' + (startOffset + (size1k * 5))  + 'px; background-image: url(../../css/images/signs/sign5k.png);"></div>');
+        $(".ground").append('<div class="sign-xk" style="top: 348px; left: ' + (startOffset + (size1k * 10))  + 'px; background-image: url(../../css/images/signs/sign10k.png);"></div>');
+        $(".ground").append('<div class="sign-xk" style="top: 348px; left: ' + (startOffset + (size1k * 15))  + 'px; background-image: url(../../css/images/signs/sign15k.png);"></div>');
+
+
+        <!-- skeleton and shadow -->
+         $("#canvas").append('<div class="shadow" style="bottom: 5px; left:'  + (startOffset - 70)  + 'px;"></div>');
+
+
+        $(".ground").append('<div class="sign-you1" style="top: 325px; left:'  + (startOffset + (size1k * 10.4))  + 'px;"></div>');
+        $(".ground").append('<div class="sign-you2" style="top: 335px; left:'  + (startOffset + (size1k * 6.4))  + 'px;"></div>');
+
+        $(".ground").append('<div class="sign-yousmall2" style="top: 320px; left:'  + (startOffset - 20)  + 'px;"></div>');
+        $(".ground").append('<div class="sign-yousmall2" style="top: 340px; left:'  + (startOffset - 50)  + 'px;"></div>');
+        $(".ground").append('<div class="sign-yousmall2" style="top: 320px; left:'  + (startOffset - 60)  + 'px;"></div>');
+        $(".ground").append('<div class="sign-yousmall2" style="top: 320px; left:'  + (startOffset - 95)  + 'px;"></div>');                     
+    </script>   

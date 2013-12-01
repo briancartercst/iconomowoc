@@ -1,0 +1,23 @@
+<div class="hero-unit">
+<h2><%= user.name %></h2>
+  <form id="steps-form" class="form-horizontal" action="/users/<%= user.id %>/createsteps" method="POST">
+    <fieldset>
+      <legend>Add Steps</legend>
+	<div class="control-group">
+  	  <label for="steps" class="control-label">Number of Steps</label>
+  	  <div class="controls">
+    	   <%- contentTag('input', 0, {type:'number', class:'span6', name:'steps'}) %>
+  	  </div>
+	</div>
+	<div class="control-group">
+  	  <label for="date" class="control-label">Date</label>
+  	  <div class="controls">
+    	   <%- contentTag('input',0,  {type:'date', class:'span6', name:'date'}) %>    
+  	  </div>
+	</div>
+	<div class="form-actions">
+        <%- contentTag('input', 'Add', {type: 'submit', class: 'btn btn-primary'}) %>
+      </div>
+    </fieldset>
+  </form>
+</div>

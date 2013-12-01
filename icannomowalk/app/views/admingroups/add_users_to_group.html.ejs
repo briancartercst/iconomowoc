@@ -1,0 +1,20 @@
+<div class="hero-unit">
+  <form id="group-form" class="form-horizontal" action="/admingroups/<%= group.id %>/linkusers" method="POST">
+    <fieldset>
+      <legend>Add User To Group</legend>
+      <% if(params.errors) { %>
+      <div class="control-group">
+        <ul>
+        <% for(var err in params.errors) { %>
+          <li><%= params.errors[err]; %></li>
+        <% } %>
+        </ul>
+      </div>
+      <% } %>
+      <%- selectTag(users,1,{name:"user",textField:'name',valueField:'id'}) %>
+      <div class="form-actions">
+        <%- contentTag('input', 'Add', {type: 'submit', class: 'btn btn-primary'}) %>
+      </div>
+    </fieldset>
+  </form>
+</div>

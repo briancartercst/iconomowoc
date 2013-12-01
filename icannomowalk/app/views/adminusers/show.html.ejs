@@ -1,0 +1,55 @@
+<div class="hero-unit">
+  <h2 class="name"><%= user.name %></h2>
+  <%- linkTo('Edit this user', editUserPath(params.id), {class: 'btn pull-right'}); %>
+
+  <%- linkTo('Walk', '/users/'+user.id+'/walk', {class: 'btn pull-right'}); %>
+
+  <%- linkTo('User List', '/users', {class: 'btn pull-right'}); %>
+
+  <%- linkTo('Add Steps', '/users/'+user.id+'/addsteps', {class: 'btn pull-right'}); %>
+
+
+  <%- linkTo('Add Random Steps', '/users/'+user.id+'/multisteps', {class: 'btn pull-right'}); %>
+</div>
+
+<h2>User Properties</h2>
+<div class="row list-item">
+  <div class="span4">
+    <h3>Name:</h3>
+  </div>
+  <div class="span8">
+    <h3><i class="icon-list-alt"></i><span class="name"><%= user.username %></span></h3>
+  </div>
+</div>
+
+<div class="row list-item">
+  <div class="span4">
+    <h3>Last Looked At Steps:</h3>
+  </div>
+  <div class="span8">
+    <h3><i class="icon-list-alt"></i><span class="lastLookedAt"><%= user.lastLookedAt ? user.lastLookedAt.steps:0 %></span></h3>
+  </div>
+</div>
+
+<div class="row list-item">
+  <div class="span4">
+    <h3>Total Steps:</h3>
+  </div>
+  <div class="span8">
+    <h3><i class="icon-list-alt"></i><span class="totalsteps"><%= user.totalsteps %></span></h3>
+  </div>
+</div>
+
+<% if (groups.length > 0) { %>
+<h2>Groups</h2>
+<% for(var i = 0;i<groups.length;i++) { %>
+<div class="row list-item">
+  <div class="span4">
+    <h3>Group:</h3>
+  </div>
+  <div class="span8">
+    <h3><i class="icon-list-alt"></i><span class="<%=groups[i].name%>"><%= groups[i].name %></span></h3>
+  </div>
+</div>
+<% }%>
+<% } %>
